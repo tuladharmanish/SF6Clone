@@ -81,11 +81,13 @@ addEventListener('blur',()=>keys.clear());
   st.addEventListener('pointerup',stop);st.addEventListener('pointercancel',stop);
   const de=document.documentElement,fsReq=de.requestFullscreen||de.webkitRequestFullscreen,fs=document.getElementById('fs');
   if(!fsReq)fs.remove(); // iPhone Safari has no element fullscreen; Add to Home Screen covers it
-  else fs.addEventListener('click',()=>{
+  else fs.addEventListener('pointerup',()=>{
     if(document.fullscreenElement||document.webkitFullscreenElement)(document.exitFullscreen||document.webkitExitFullscreen).call(document);
     else Promise.resolve(fsReq.call(de)).then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape')).catch(()=>{});
   });
   addEventListener('contextmenu',e=>e.preventDefault());
+  // iOS ignores user-scalable=no: block double-tap and pinch zoom on the game surface
+  for(const ev of ['touchstart','touchend','gesturestart','dblclick'])document.addEventListener(ev,e=>e.preventDefault(),{passive:false});
 }
 const KB=[
   {u:['KeyW'],d:['KeyS'],l:['KeyA'],r:['KeyD'],b:[['KeyJ'],['KeyK'],['KeyL'],['Semicolon']]},
