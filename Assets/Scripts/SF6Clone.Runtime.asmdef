@@ -1,0 +1,12 @@
+{
+  "name": "SF6Clone.Runtime",
+  "rootNamespace": "SF6Clone",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}
