@@ -8,21 +8,23 @@
 <title>SF6 Clone</title>
 <style>
 html,body{margin:0;height:100%;background:#000;overflow:hidden}
-canvas{display:block;width:100vw;height:100vh;object-fit:contain}
+canvas{position:fixed;inset:0;display:block;width:100vw;height:100vh;height:100dvh;object-fit:contain}
+:root{--s:clamp(96px,34vh,170px);--g:max(12px,3vh)}
+:root{--s:clamp(96px,34dvh,170px);--g:max(12px,3dvh)}
 body{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 #tc,#rot{display:none}
 #tc{position:fixed;inset:0;pointer-events:none}
 #tc *{pointer-events:auto}
 #tc b{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:50%;
-  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);color:#fff;font:bold 15px sans-serif}
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);color:#fff;font:bold clamp(11px,2.6dvh,16px) sans-serif}
 #tc b.on{background:rgba(255,255,255,.5)}
-#stick{position:absolute;left:max(24px,env(safe-area-inset-left));bottom:24px;width:150px;height:150px;border-radius:50%;
+#stick{position:absolute;left:max(var(--g),env(safe-area-inset-left));bottom:max(var(--g),env(safe-area-inset-bottom));width:var(--s);height:var(--s);border-radius:50%;
   background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.35)}
-#knob{position:absolute;left:45px;top:45px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.4);pointer-events:none!important}
-#btns{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:24px;width:170px;height:170px}
-#btns b{width:72px;height:72px}
-#top{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
-#top b{position:static;width:42px;height:42px;font-size:16px}
+#knob{position:absolute;left:30%;top:30%;width:40%;height:40%;border-radius:50%;background:rgba(255,255,255,.4);pointer-events:none!important}
+#btns{position:absolute;right:max(var(--g),env(safe-area-inset-right));bottom:max(var(--g),env(safe-area-inset-bottom));width:calc(var(--s)*1.1);height:calc(var(--s)*1.1)}
+#btns b{width:46%;height:46%}
+#top{position:absolute;top:max(6px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);display:flex;gap:10px}
+#top b{position:static;width:clamp(32px,9dvh,44px);height:clamp(32px,9dvh,44px);font-size:16px}
 #rot{position:fixed;inset:0;background:#000;color:#fff;font:bold 22px sans-serif;align-items:center;justify-content:center;text-align:center;z-index:9}
 @media (pointer:coarse){#tc{display:block}}
 @media (pointer:coarse) and (orientation:portrait){#rot{display:flex}}
