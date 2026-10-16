@@ -2,15 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>SF6 Clone</title>
 <style>
 html,body{margin:0;height:100%;background:#000;overflow:hidden}
 canvas{display:block;width:100vw;height:100vh;object-fit:contain}
+body{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#tc,#rot{display:none}
+#tc{position:fixed;inset:0;pointer-events:none}
+#tc *{pointer-events:auto}
+#tc b{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:50%;
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.45);color:#fff;font:bold 15px sans-serif}
+#tc b.on{background:rgba(255,255,255,.5)}
+#stick{position:absolute;left:max(24px,env(safe-area-inset-left));bottom:24px;width:150px;height:150px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.35)}
+#knob{position:absolute;left:45px;top:45px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.4);pointer-events:none!important}
+#btns{position:absolute;right:max(24px,env(safe-area-inset-right));bottom:24px;width:170px;height:170px}
+#btns b{width:72px;height:72px}
+#top{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+#top b{position:static;width:42px;height:42px;font-size:16px}
+#rot{position:fixed;inset:0;background:#000;color:#fff;font:bold 22px sans-serif;align-items:center;justify-content:center;text-align:center;z-index:9}
+@media (pointer:coarse){#tc{display:block}}
+@media (pointer:coarse) and (orientation:portrait){#rot{display:flex}}
 </style>
 </head>
 <body>
 <canvas id="c" width="1280" height="720"></canvas>
+<div id="tc">
+  <div id="stick"><div id="knob"></div></div>
+  <div id="btns">
+    <b data-k="KeyJ" style="left:0;bottom:0">LP</b><b data-k="KeyK" style="left:0;top:0">MP</b>
+    <b data-k="KeyL" style="right:0;top:0">HP</b><b data-k="Semicolon" style="right:0;bottom:0">SP</b>
+  </div>
+  <div id="top"><b data-k="Escape">&#9776;</b><b data-k="KeyP">II</b><b id="fs">&#x26F6;</b></div>
+</div>
+<div id="rot">&#x21BB;<br>Rotate your device<br>to landscape</div>
 <script>
 'use strict';
 // Browser port of the Unity SF6Clone. 60fps fixed step; world units (1u = U px), y up from floor.
@@ -29,6 +57,34 @@ addEventListener('keydown',e=>{
 });
 addEventListener('keyup',e=>keys.delete(e.code));
 addEventListener('blur',()=>keys.clear());
+// touch controls: synthesize P1 key codes so menus and fights reuse the keyboard path
+{
+  const press=c=>{if(!keys.has(c)){keys.add(c);onKey(c);}};
+  for(const b of document.querySelectorAll('#tc b[data-k]')){
+    const k=b.dataset.k,up=()=>{keys.delete(k);b.classList.remove('on');};
+    b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);b.classList.add('on');press(k);});
+    b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);
+  }
+  const st=document.getElementById('stick'),kn=document.getElementById('knob'),DIRS=['KeyW','KeyA','KeyS','KeyD'];
+  const stick=e=>{
+    const r=st.getBoundingClientRect(),R=r.width/2;
+    let dx=e.clientX-r.left-R,dy=e.clientY-r.top-R;const m=Math.hypot(dx,dy);if(m>R){dx*=R/m;dy*=R/m;}
+    kn.style.transform=`translate(${dx}px,${dy}px)`;
+    const t=R*.35,on={KeyW:dy<-t,KeyS:dy>t,KeyA:dx<-t,KeyD:dx>t};
+    for(const k of DIRS)on[k]?press(k):keys.delete(k);
+  };
+  const stop=()=>{kn.style.transform='';for(const k of DIRS)keys.delete(k);};
+  st.addEventListener('pointerdown',e=>{e.preventDefault();st.setPointerCapture(e.pointerId);stick(e);});
+  st.addEventListener('pointermove',e=>{if(st.hasPointerCapture(e.pointerId))stick(e);});
+  st.addEventListener('pointerup',stop);st.addEventListener('pointercancel',stop);
+  const de=document.documentElement,fsReq=de.requestFullscreen||de.webkitRequestFullscreen,fs=document.getElementById('fs');
+  if(!fsReq)fs.remove(); // iPhone Safari has no element fullscreen; Add to Home Screen covers it
+  else fs.addEventListener('click',()=>{
+    if(document.fullscreenElement||document.webkitFullscreenElement)(document.exitFullscreen||document.webkitExitFullscreen).call(document);
+    else Promise.resolve(fsReq.call(de)).then(()=>screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape')).catch(()=>{});
+  });
+  addEventListener('contextmenu',e=>e.preventDefault());
+}
 const KB=[
   {u:['KeyW'],d:['KeyS'],l:['KeyA'],r:['KeyD'],b:[['KeyJ'],['KeyK'],['KeyL'],['Semicolon']]},
   {u:['ArrowUp'],d:['ArrowDown'],l:['ArrowLeft'],r:['ArrowRight'],b:[['Numpad4','Digit7'],['Numpad5','Digit8'],['Numpad6','Digit9'],['NumpadAdd','Digit0']]}
