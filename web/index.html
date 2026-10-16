@@ -125,7 +125,8 @@ function build(c){
   c.n={};
   for(const k in c.norm){const a=c.norm[k],f=k==='fH';
     c.n[k]=mv(f?a[0]:SLOTNAME[k],f?a.slice(1):a,{type:'normal',slot:k,hb:SLOT[k],low:k[0]==='c',kd:k==='cH',cc:k==='sH',oh:f&&c.fhOH!==false,air:k[0]==='j'});}
-  c.order=['360','DP','CBF','CDU','QCF','QCB'].filter(k=>c.sp[k]);
+  // key 'QCF' = motion+S (punch specials), 'QCFK' = motion+H (kick specials)
+  c.order=['360','DP','CBF','CDU','QCF','QCB','DD'].flatMap(k=>[k,k+'K']).filter(k=>c.sp[k]);
   c.size=c.size||1;c.reach=c.reach||1;c.walk=c.walk||4.6;c.jump=c.jump||17;c.jumpX=c.jumpX||4.2;
   return c;
 }
@@ -138,54 +139,62 @@ build({name:'RYU',arch:'Shoto',fhOH:true,
     jL:[4,3,8,8,6,300,3,0],jM:[6,4,10,12,8,500,5,0],jH:[9,4,14,16,10,700,8,0],fH:['Collarbone Breaker',19,4,16,20,12,800,10,4]},
   sp:{QCF:mv('Hadoken',[13,2,28,14,10,500,5,0],{proj:{spd:9,w:.6,h:.6,y:1.2,color:'#4aa8ff'}}),
       DP:mv('Shoryuken',[3,6,30,20,-10,900,4,13],{inv:8,launch:true,rise:12,hb:[.5,1.3,.6,1.6]}),
-      QCB:mv('Tatsumaki',[8,12,22,16,8,1000,6,4],{hits:3,dx:4,hb:[.4,1.1,1.6,.5]})},
+      QCBK:mv('Tatsumaki Senpukyaku',[8,12,22,16,8,1000,6,4],{hits:3,dx:4,hb:[.4,1.1,1.6,.5]}),
+      QCB:mv('Hashogeki',[16,4,24,20,10,700,10,2],{hb:[.9,1.2,1.0,.8]}),
+      QCFK:mv('Jodan Sokutogeri',[16,3,24,20,12,900,14,3],{dx:2,hb:[1.1,1.3,.8,.5]})},
   sup:mv('Shinku Hadoken',[10,20,40,30,10,2500,10,0],{type:'super',launch:true,proj:{spd:12,w:1.2,h:1.0,y:1.2,color:'#7fd4ff',hits:5}}),
-  moves:['QCF+S  Hadoken','DP+S  Shoryuken','QCB+S  Tatsumaki','6+H  Collarbone Breaker','QCFx2+S  Shinku Hadoken']}),
+  moves:['QCF+S  Hadoken','DP+S  Shoryuken','QCB+H  Tatsumaki Senpukyaku','QCB+S  Hashogeki','QCF+H  Jodan Sokutogeri','6+H  Collarbone Breaker','QCFx2+S  Shinku Hadoken']}),
 build({name:'CHUN-LI',arch:'Rushdown',walk:5.4,jump:18,reach:1.08,fhOH:true,
   pal:{top:'#2456c8',pants:'#2456c8',skin:'#e8b890',hair:'#1a0f0a',belt:'#f2c94c',band:'#f2f2f2',glove:'#f2c94c'},
   norm:{sL:[3,2,5,7,6,200,2,0],sM:[5,3,8,10,8,400,4,0],sH:[8,4,14,16,8,700,6,2],cL:[3,2,5,7,6,200,2,0],cM:[6,3,9,11,9,400,4,0],cH:[9,4,16,18,10,700,7,0],
     jL:[4,4,8,8,6,300,3,0],jM:[5,5,10,12,8,500,5,0],jH:[7,5,12,14,10,700,7,0],fH:['Yosokyaku',18,4,16,20,12,800,8,4]},
-  sp:{QCF:mv('Kikoken',[14,2,24,12,8,400,4,0],{proj:{spd:6,w:.7,h:.7,y:1.1,color:'#9fd0ff'}}),
-      QCB:mv('Hazanshu',[15,4,18,20,10,700,8,6],{oh:true,dx:5,hb:[.8,.9,.8,.8]}),
-      CDU:mv('Spinning Bird Kick',[10,20,20,16,6,1000,6,6],{hits:4,dx:6,hb:[0,1.5,2.0,.5]})},
+  sp:{CBF:mv('Kikoken',[14,2,24,12,8,400,4,0],{proj:{spd:6,w:.7,h:.7,y:1.1,color:'#9fd0ff'}}),
+      QCBK:mv('Hazanshu',[15,4,18,20,10,700,8,6],{oh:true,dx:5,hb:[.8,.9,.8,.8]}),
+      CDUK:mv('Spinning Bird Kick',[10,20,20,16,6,1000,6,6],{hits:4,dx:6,hb:[0,1.5,2.0,.5]}),
+      QCFK:mv('Hyakuretsukyaku',[10,16,18,14,8,900,4,0],{hits:5,hb:[.9,1.0,1.1,.6]}),
+      DDK:mv('Tenshokyaku',[8,10,24,20,-8,900,4,12],{launch:true,rise:10,hits:3,hb:[.5,1.2,.8,1.4]})},
   sup:mv('Hoyokusen',[6,40,30,30,10,3000,10,8],{type:'super',hits:8,dx:4,launch:true,hb:[.9,.8,1.1,1.0]}),
-  moves:['QCF+S  Kikoken','QCB+S  Hazanshu (overhead)','[2]8+S  Spinning Bird Kick','6+H  Yosokyaku','QCFx2+S  Hoyokusen']}),
+  moves:['[4]6+S  Kikoken','QCB+H  Hazanshu (overhead)','[2]8+H  Spinning Bird Kick','QCF+H  Hyakuretsukyaku','22+H  Tenshokyaku','6+H  Yosokyaku','QCFx2+S  Hoyokusen']}),
 build({name:'ZANGIEF',arch:'Grappler',hp:11000,walk:3.6,jump:15,jumpX:3.4,size:1.15,reach:1.05,
   pal:{top:'#d29a6c',pants:'#c81a1a',skin:'#d29a6c',hair:'#4a2410',belt:'#f2c94c',band:null,glove:'#c81a1a'},
   norm:{sL:[4,2,8,8,7,200,3,0],sM:[6,3,12,12,8,500,6,0],sH:[12,4,20,20,10,1000,10,4],cL:[4,2,7,8,7,200,2,0],cM:[7,3,12,12,9,500,5,0],cH:[12,4,20,22,12,1000,10,0],
     jL:[5,3,8,8,6,300,3,0],jM:[8,4,12,14,8,600,6,0],jH:[10,6,16,18,10,900,10,4]},
   sp:{'360':mv('Screw Piledriver',[5,2,40,0,0,2200,0,0],{cmd:1.5}),
       QCF:mv('Banishing Flat',[18,4,22,20,10,800,10,0],{armor:1,dx:3,hb:[1.2,1.0,.9,.7]}),
-      QCB:mv('Cyclone Lariat',[12,24,28,18,8,1600,8,6],{hits:4,hb:[0,1.35,2.6,.5]})},
+      QCB:mv('Double Lariat',[12,24,28,18,8,1600,8,6],{hits:4,hb:[0,1.35,2.6,.5]}),
+      '360K':mv('Borscht Dynamite',[8,2,40,0,0,2400,0,0],{cmd:1.3}),
+      DDK:mv('Tundra Storm',[4,6,26,20,-8,1200,4,12],{inv:6,launch:true,hb:[.4,1.6,.9,1.0]})},
   sup:mv('Siberian Express',[5,2,60,0,0,3500,0,0],{type:'super',cmd:2.0}),
-  moves:['360+S  Screw Piledriver','QCF+S  Banishing Flat (armor)','QCB+S  Cyclone Lariat','QCFx2+S  Siberian Express (grab)']}),
+  moves:['360+S  Screw Piledriver','360+H  Borscht Dynamite','QCF+S  Banishing Flat (armor)','QCB+S  Double Lariat','22+H  Tundra Storm (anti-air)','QCFx2+S  Siberian Express (grab)']}),
 build({name:'GUILE',arch:'Charge Zoner',walk:4.4,reach:1.08,fhOH:false,
   pal:{top:'#4f6e34',pants:'#5d7a3e',skin:'#e0aa80',hair:'#e8d070',belt:'#2b2b2b',band:null,glove:'#2b2b2b'},
   norm:{sL:[4,2,7,8,7,200,3,0],sM:[6,3,10,12,8,500,5,0],sH:[9,4,16,16,10,800,8,2],cL:[4,2,7,8,7,200,2,0],cM:[6,3,10,12,9,500,5,0],cH:[10,4,18,20,12,900,8,0],
     jL:[4,3,8,8,6,300,3,0],jM:[6,4,10,12,8,500,5,0],jH:[8,4,12,16,10,800,8,0],fH:['Spinning Backfist',16,4,18,20,10,900,10,2]},
   sp:{CBF:mv('Sonic Boom',[15,2,28,12,8,400,4,0],{proj:{spd:11,w:.4,h:.9,y:1.2,color:'#fff27a'}}),
-      CDU:mv('Flash Kick',[5,8,30,20,-10,1000,8,14],{inv:8,launch:true,rise:11,hb:[.6,1.0,.8,1.6]}),
-      QCF:mv('Sonic Cross',[14,6,26,14,8,600,5,2],{proj:{spd:7,w:.8,h:.8,y:1.1,color:'#ffd84a',hits:2}})},
+      CDUK:mv('Somersault Kick',[5,8,30,20,-10,1000,8,14],{inv:8,launch:true,rise:11,hb:[.6,1.0,.8,1.6]}),
+      QCB:mv('Sonic Blade',[16,2,26,14,10,400,3,0],{proj:{spd:0,at:1.4,y:1.1,w:.8,h:1.0,life:60,hits:2,color:'#ffd84a'}})},
   sup:mv('Sonic Hurricane',[10,30,40,25,10,2500,10,0],{type:'super',hits:6,launch:true,hb:[1.3,1.2,1.8,1.8]}),
-  moves:['[4]6+S  Sonic Boom','[2]8+S  Flash Kick','QCF+S  Sonic Cross','6+H  Spinning Backfist','QCFx2+S  Sonic Hurricane']}),
+  moves:['[4]6+S  Sonic Boom','[2]8+H  Somersault Kick','QCB+S  Sonic Blade','6+H  Spinning Backfist','QCFx2+S  Sonic Hurricane']}),
 build({name:'LUKE',arch:'Modern Rushdown',walk:5.0,reach:.96,fhOH:false,
   pal:{top:'#2d2d2d',pants:'#5d6b3a',skin:'#e6b48c',hair:'#6b4a2a',belt:'#c8c8c8',band:null,glove:'#c84a20'},
   norm:{sL:[3,2,5,7,6,200,2,0],sM:[5,3,8,10,8,400,4,0],sH:[8,4,14,16,10,800,7,4],cL:[3,2,5,7,6,200,2,0],cM:[6,3,10,12,9,500,5,0],cH:[10,4,18,20,12,800,8,0],
     jL:[4,3,8,8,6,300,3,0],jM:[5,4,10,12,8,500,5,0],jH:[8,4,12,14,10,700,7,2],fH:['Thrust Strike',13,3,12,14,10,500,5,0]},
-  sp:{QCF:mv('Sand Blaster',[13,2,24,12,8,400,4,0],{proj:{spd:10,w:.6,h:.5,y:1.1,color:'#ffb05a'}}),
+  sp:{QCF:mv('Sand Blast',[13,2,24,12,8,400,4,0],{proj:{spd:10,w:.6,h:.5,y:1.1,color:'#ffb05a'}}),
       QCB:mv('Flash Knuckle',[10,4,20,16,8,700,8,2],{dx:9,hb:[1.0,1.3,.8,.5]}),
-      DP:mv('Rising Rocket',[5,12,28,20,-8,1100,6,14],{inv:6,launch:true,rise:12,hits:2,hb:[.6,1.2,.7,1.4]})},
-  sup:mv('Vermillion Sandstorm',[9,24,38,30,10,2800,14,4],{type:'super',hits:4,dx:8,launch:true,hb:[1.0,1.1,1.0,.8]}),
-  moves:['QCF+S  Sand Blaster','QCB+S  Flash Knuckle','DP+S  Rising Rocket','6+H  Thrust Strike','QCFx2+S  Vermillion Sandstorm']}),
+      DP:mv('Rising Uppercut',[5,12,28,20,-8,1100,6,14],{inv:6,launch:true,rise:12,hits:2,hb:[.6,1.2,.7,1.4]}),
+      QCFK:mv('Avenger',[14,4,18,16,8,700,6,0],{dx:10,hb:[.9,1.1,.8,.6]})},
+  sup:mv('Vulcan Blast',[9,24,38,30,10,2800,14,4],{type:'super',hits:4,dx:8,launch:true,hb:[1.0,1.1,1.0,.8]}),
+  moves:['QCF+S  Sand Blast','QCB+S  Flash Knuckle','DP+S  Rising Uppercut','QCF+H  Avenger','6+H  Thrust Strike','QCFx2+S  Vulcan Blast']}),
 build({name:'JP',arch:'Tricky Zoner',walk:3.8,reach:1.2,fhOH:true,
   pal:{top:'#24243a',pants:'#1c1c2c',skin:'#d8c0a8',hair:'#e0e0e0',belt:'#a050d0',band:null,glove:'#a050d0'},
   norm:{sL:[4,2,7,8,7,200,3,0],sM:[6,3,10,12,8,500,5,0],sH:[10,4,16,18,10,800,7,2],cL:[4,2,7,8,7,200,2,0],cM:[7,3,12,14,10,600,6,0],cH:[12,4,22,24,14,1000,10,0],
     jL:[4,3,8,8,6,300,3,0],jM:[6,4,10,12,8,500,5,0],jH:[9,4,14,16,12,900,9,2],fH:['Despair',16,4,18,20,12,800,8,4]},
-  sp:{QCF:mv('Tristis',[14,2,26,12,8,400,4,0],{proj:{spd:7,w:.7,h:.7,y:1.2,color:'#c77dff'}}),
-      QCB:mv('Amor',[12,2,20,16,10,500,2,10],{launch:true,proj:{spd:0,at:4.5,y:.6,w:.7,h:1.3,life:22,color:'#9b4dff'}}),
-      DP:mv('Odium',[6,8,28,18,-8,900,5,12],{inv:8,launch:true,hb:[.9,1.1,.9,1.3]})},
-  sup:mv('Departida',[10,40,45,30,10,2800,12,8],{type:'super',launch:true,proj:{spd:0,at:4,y:1,w:1.4,h:2.2,life:45,hits:6,color:'#8a2be2'}}),
-  moves:['QCF+S  Tristis','QCB+S  Amor (ground spike)','DP+S  Odium','6+H  Despair (overhead)','QCFx2+S  Departida']}),
+  sp:{QCFK:mv('Torbalan',[14,2,26,12,8,400,4,0],{proj:{spd:7,w:.7,h:.7,y:1.2,color:'#c77dff'}}),
+      DD:mv('Triglav',[12,2,20,16,10,500,2,10],{launch:true,proj:{spd:0,at:4.5,y:.6,w:.7,h:1.3,life:22,color:'#9b4dff'}}),
+      QCF:mv('Stribog',[12,4,22,18,8,700,8,2],{hb:[1.4,1.1,1.0,.6]}),
+      QCB:mv('Departure',[18,2,18,16,10,500,2,8],{launch:true,proj:{spd:0,at:3,y:.6,w:.9,h:1.4,life:40,color:'#6a2bd8'}})},
+  sup:mv('Interdiction',[10,40,45,30,10,2800,12,8],{type:'super',launch:true,proj:{spd:0,at:4,y:1,w:1.4,h:2.2,life:45,hits:6,color:'#8a2be2'}}),
+  moves:['QCF+S  Stribog','22+S  Triglav (ground spike)','QCF+H  Torbalan','QCB+S  Departure (portal)','6+H  Despair (overhead)','QCFx2+S  Interdiction']}),
 ];
 
 // ---------------- game state ----------------
@@ -222,6 +231,7 @@ class Fighter{
     case 'QCF':return seqMatch(h,[2,3,6],15);case 'QCB':return seqMatch(h,[2,1,4],15);
     case 'DP':return d===3&&seqMatch(h,[6,2,3],15);
     case 'CBF':return FWD.includes(d)&&charge(h,BACK,40);case 'CDU':return UP.includes(d)&&charge(h,DOWN,40);
+    case 'DD':return d===2&&seqMatch(h,[2,5,2],15);
     case '360':return spin(h,30);}}
   startMove(m){this.drBonus=this.state==='driveRush'?4:0;if(this.drBonus)this.push=this.facing*.06;
     this.move=m;this.mf=0;this.hitCount=0;this.rehit=0;this.connected=false;this.armorUsed=0;this.set('attack');
@@ -230,10 +240,11 @@ class Fighter{
   // cancel: null = neutral, 'normal' = cancel from a normal, 'special' = cancel from a special (supers only)
   tryActions(c){return this.trySpecial(c)||(!c&&this.tryPairs())||this.tryDR(c)||this.tryNormal(c);}
   trySpecial(c){
-    if(!this.pressed(3)||this.y>.01)return false;
-    if(this.superM>=10000&&seqMatch(this.hist,[2,3,6,2,3,6],34)){this.consume(3);this.doSuper();return true;}
+    if(!(this.pressed(3)||this.pressed(2))||this.y>.01)return false;
+    if(this.pressed(3)&&this.superM>=10000&&seqMatch(this.hist,[2,3,6,2,3,6],34)){this.consume(3);this.doSuper();return true;}
     if(c==='special')return false;
-    for(const k of this.def.order)if(this.motion(k)){const m=this.def.sp[k];this.consume(3);
+    for(const k of this.def.order){const b=k.endsWith('K')?2:3;if(!this.pressed(b)||!this.motion(k.replace(/K$/,'')))continue;
+      const m=this.def.sp[k];this.consume(b);
       if(m.proj&&game.proj.some(p=>p.owner===this))return false;  // one projectile at a time
       this.startMove(m);return true;}
     return false;
@@ -472,10 +483,10 @@ class CPU{
     if(threat){if(this.blockDec===undefined)this.blockDec=R()<.7;if(this.blockDec)return {d:op.move&&op.move.low?1:4};}else this.blockDec=undefined;
     if(!ACTIONABLE.has(me.state))return {d:5};
     if(op.y>.8&&op.vy<4&&dist<3&&R()<.15){
-      if(sp.DP)return this.seq([6,2,3,3],'S');if(sp.CDU)return this.seq([...Array(42).fill(2),8],'S');return this.seq([2,2],'H');}
+      if(sp.DP)return this.seq([6,2,3,3],'S');if(sp.CDUK)return this.seq([...Array(42).fill(2),8],'H');if(sp.DDK)return this.seq([2,5,2],'H');return this.seq([2,2],'H');}
     if(--this.cool>0)return {d:dist>4?6:5};
     this.cool=10+(R()*25|0);
-    const r=R(),fb=sp.QCF&&sp.QCF.proj?()=>this.seq([2,2,3,3,6,6],'S'):sp.CBF?()=>this.seq([...Array(44).fill(4),6],'S'):null;
+    const r=R(),fb=sp.QCF&&sp.QCF.proj?()=>this.seq([2,2,3,3,6,6],'S'):sp.QCFK&&sp.QCFK.proj?()=>this.seq([2,2,3,3,6,6],'H'):sp.CBF?()=>this.seq([...Array(44).fill(4),6],'S'):null;
     const jumpIn=()=>this.seq([9,...Array(24).fill(5),5],'H');
     if(me.superM>=10000&&dist<2.5&&R()<.25)return this.seq([2,3,6,2,3,6,6],'S');
     if(dist>4.5){
@@ -794,7 +805,7 @@ function drawSelect(){
   text(show.name,1070,165,36,'#ffd23a');
   ctx.font='16px monospace';ctx.textAlign='left';ctx.fillStyle='#ddd';
   show.moves.forEach((m,i)=>ctx.fillText(m,915,215+i*30));
-  ctx.fillStyle='#888';ctx.fillText('S = Special button',915,215+show.moves.length*30+20);
+  ctx.fillStyle='#888';ctx.fillText('S = punch specials · H = kick specials',915,215+show.moves.length*30+20);
   if(!solo){const p2=CH[s.c[1]];ctx.fillStyle='#4af';ctx.fillText('P2: '+p2.name,915,560);}
   text('Esc: back',W/2,H-24,16,'#888',undefined,false);
 }
